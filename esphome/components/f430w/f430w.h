@@ -21,7 +21,6 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/fan/fan.h"
-#include "esphome/components/i2c/i2c.h"
 #include "esphome/components/text_sensor/text_sensor.h"
 #include "esphome/components/button/button.h"
 #include "esphome/components/remote_base/remote_base.h"
@@ -175,7 +174,6 @@ namespace esphome
 
     class F430WFan : public Component,
                     public fan::Fan,
-                    public i2c::I2CDevice,
                     public remote_base::RemoteReceiverListener,
                     public remote_base::RemoteTransmittable
     {

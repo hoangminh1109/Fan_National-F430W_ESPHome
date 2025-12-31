@@ -16,25 +16,22 @@ from esphome import pins
 from esphome.core import CORE
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import fan, i2c, text_sensor, button, remote_base
+from esphome.components import fan, text_sensor, button, remote_base
 from esphome.const import (
     CONF_OUTPUT_ID,
     CONF_ID,
     CONF_NAME,
     CONF_DISABLED_BY_DEFAULT,
-    CONF_INPUT,
-    CONF_PULLDOWN
 )
 
-DEPENDENCIES = ["remote_transmitter", "i2c"]
-AUTO_LOAD = ["fan", "remote_base", "i2c", "text_sensor", "button"]
+DEPENDENCIES = ["remote_transmitter"]
+AUTO_LOAD = ["fan", "remote_base", "text_sensor", "button"]
 
 f430wfan_ns = cg.esphome_ns.namespace('f430wfan')
 F430WFan = f430wfan_ns.class_(
     "F430WFan",
     cg.Component,
     fan.Fan,
-    i2c.I2CDevice,
     remote_base.RemoteReceiverListener,
     remote_base.RemoteTransmittable,
     )
@@ -109,7 +106,6 @@ CONFIG_SCHEMA = (fan.fan_schema(F430WFan).extend({
     })
     .extend(cv.COMPONENT_SCHEMA)
     .extend(remote_base.REMOTE_TRANSMITTABLE_SCHEMA)
-    # .extend(i2c.i2c_device_schema(0x20))
     .add_extra(validate_platform)
     )
 
