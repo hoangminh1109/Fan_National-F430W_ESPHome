@@ -204,30 +204,39 @@ namespace esphome
 
           bool state_change = false;
 
-          FanMode mode = F430W_FAN_MODE_INVALID;
-          if (!led_state[0][1]) mode = F430W_FAN_MODE_NORMAL;
-          else mode = F430W_FAN_MODE_NATURE;
+          // speed
+          FanSpeed speed = F430W_FAN_OFF;
+          if ( !(this->pins_[F430W_FAN_LED_HI]->digital_read()) ) speed = F430W_FAN_HIGH;
+          if ( !(this->pins_[F430W_FAN_LED_MED]->digital_read()) ) speed = F430W_FAN_MEDIUM;
+          if ( !(this->pins_[F430W_FAN_LED_LO]->digital_read()) ) speed = F430W_FAN_LOW;
+
+          FanMode mode = F430W_FAN_MODE_OFF;
+          if (led_state[0][1]) mode = F430W_FAN_MODE_NATURE;
+          else if (speed != F430W_FAN_OFF) mode = F430W_FAN_MODE_NORMAL;
 
           // fan mode
           if (this->fan_state_.mode != mode)
           {
             this->fan_state_.mode = mode;
-            this->set_preset_mode_(FANMODE_STR[static_cast<uint8_t>(this->fan_state_.mode)]);
-            if (this->fan_state_.mode == F430W_FAN_MODE_NATURE)
+            if (this->fan_state_.mode == F430W_FAN_MODE_OFF)
             {
-              this->fan_state_.speed = F430W_FAN_OFF;
-              this->speed = static_cast<int>(this->fan_state_.speed);
+              this->state = false;
+              this->clear_preset_mode_();
+            }
+            else
+            {
+              this->set_preset_mode_(FANMODE_STR[static_cast<uint8_t>(this->fan_state_.mode)]);
+              if (this->fan_state_.mode == F430W_FAN_MODE_NATURE)
+              {
+                this->fan_state_.speed = F430W_FAN_OFF;
+                this->speed = static_cast<int>(this->fan_state_.speed);
+              }
             }
             state_change = true;
           }
 
           if (this->fan_state_.mode == F430W_FAN_MODE_NORMAL)
           {
-            // speed
-            FanSpeed speed = F430W_FAN_OFF;
-            if ( !(this->pins_[F430W_FAN_LED_HI]->digital_read()) ) speed = F430W_FAN_HIGH;
-            if ( !(this->pins_[F430W_FAN_LED_MED]->digital_read()) ) speed = F430W_FAN_MEDIUM;
-            if ( !(this->pins_[F430W_FAN_LED_LO]->digital_read()) ) speed = F430W_FAN_LOW;
             // fan speed
             if (this->fan_state_.speed != speed)
             {
